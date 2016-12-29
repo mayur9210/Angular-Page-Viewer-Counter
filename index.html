@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<meta name="robots" content="noindex">
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.13/angular-ui-router.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body ng-app="myApp">
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" >Angular Counter</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+              <li><a class="active" ui-sref="page1">Page1</a></li>
+              <li><a ui-sref="page2">Page2</a></li>
+              <li><a ui-sref="page3">Page3</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Page Views for {{stateName}}: {{pageViews}}</h1>
+        <p>This example is a the simple page view counter of the how page viewer is counted with the simple Angular Router.</p>
+        <p>The page counter will increase whenever the user visit the page or user referesh the page</p>
+        <p>
+          <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View source code &raquo;</a>
+        </p>
+      </div>
+    </div> 
+<script id="jsbin-javascript">
+angular.module('myApp', ['ui.router'])
+.config(function($stateProvider) {
+   $stateProvider
+   .state('page1', {url:'/page1'})
+   .state('page2', {url:'/page2'})
+   .state('page3', {url:'/page3'})
+   ;
+})
+.run(function($rootScope, PageViews) {
+  $rootScope.$on('$stateChangeStart', function(e, toState) {
+    PageViews.add(toState.name);
+    $rootScope.stateName = toState.name;
+    $rootScope.pageViews = PageViews.get(toState.name);
+  });
+})
+.factory('PageViews', function() {
+  localStorage.views = localStorage.views || '{}';
+  return {
+    add: function(stateName) {
+    var views = JSON.parse(localStorage.views);
+    console.log(views);
+    views[stateName] = views[stateName] || 0;
+    ++views[stateName];
+    localStorage.views = JSON.stringify(views);
+    },
+    get: function(stateName) {
+      var views = JSON.parse(localStorage.views);
+      return views[stateName] || 0;
+    }
+  };
+})
+;
+</script>
+</body>
+</html>
